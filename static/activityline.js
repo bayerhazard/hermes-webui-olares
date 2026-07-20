@@ -18,7 +18,12 @@
   'use strict';
 
   const ROW_SEL = '.transparent-event-row';
-  const LIVE_SEL = '[data-live-assistant="1"],[data-live-tid],[data-live-thinking]';
+  // The turn is "live" until the system converts the live turn into a settled
+  // turn. The durable signal is the turn-level marker (the same one the rest of
+  // the app uses at ui.js isLive): the #liveAssistantTurn id or
+  // data-live-assistant-turn="1". Per-segment [data-live-assistant="1"] markers
+  // are removed mid-stream, so they must NOT gate the live line.
+  const LIVE_SEL = '#liveAssistantTurn,[data-live-assistant-turn="1"]';
 
   let _scheduled = false;
 
@@ -35,7 +40,12 @@
     return Array.from(blocks.querySelectorAll(ROW_SEL + ':not([data-compression-card])'));
   }
 
-  function _isLive(turn) { return !!turn.querySelector(LIVE_SEL); }
+  function _isLive(turn) {
+    // A turn is live if it carries the turn-level live marker itself, or still
+    // has any live segment row inside it.
+    if (turn.id === 'liveAssistantTurn' || turn.getAttribute('data-live-assistant-turn') === '1') return true;
+    return !!turn.querySelector('[data-live-assistant="1"],[data-live-tid],[data-live-thinking]');
+  }
 
   function _toolCount(turn) {
     const stashed = Number(turn.getAttribute('data-transparent-total-tool-count'));
@@ -159,7 +169,7 @@
     const inner = document.getElementById('msgInner');
     if (!inner) { setTimeout(init, 400); return; }
     const mo = new MutationObserver(_schedule);
-    mo.observe(inner, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['data-live-tid', 'data-live-thinking', 'data-live-assistant', 'data-event-type', 'data-transparent-total-tool-count'] });
+    mo.observe(inner, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['data-live-tid', 'data-live-thinking', 'data-live-assistant', 'data-live-assistant-turn', 'data-event-type', 'data-transparent-total-tool-count'] });
     _schedule();
   }
 
