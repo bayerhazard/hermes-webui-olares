@@ -768,19 +768,8 @@ function _micToastKeyForRecognitionError(error){
     const file=new File([blob],`voice-input-${Date.now()}.${ext}`,{type:blob.type||`audio/${ext}`});
     S.pendingFiles.push(file);
     renderTray();
-    // An explicit Send-button click while recording sets _micPendingSend — that
-    // is an unambiguous send intent, so honor it even when the composer already
-    // has text (mirrors the transcribe path). Otherwise (manual mic-stop): send
-    // immediately only if the composer is empty, else just attach + toast so the
-    // user can keep composing.
-    if(window._micPendingSend){
-      window._micPendingSend=false;
-      send();
-    }else if(!ta.value.trim()){
-      send();
-    }else{
-      showToast(t('voice_raw_attached'));
-    }
+    // Raw audio attached → recording is done → send immediately.
+    _autoSendAfterDictation();
   }
 
   function _commitTranscript(text, prefixOverride){
@@ -818,10 +807,8 @@ function _micToastKeyForRecognitionError(error){
     }
     ta.value=committed;
     autoResize();
-    if(window._micPendingSend){
-      window._micPendingSend=false;
-      send();
-    }
+    // Server-STT path: transcript committed → recording is done → send now.
+    _autoSendAfterDictation();
   }
 
   function _isServerSttUnavailable(err){
@@ -830,6 +817,16 @@ function _micToastKeyForRecognitionError(error){
     if(!status) return true;
     const msg=String((err&&err.message)||'').toLowerCase();
     return msg.includes('unavailable')||msg.includes('not configured');
+  }
+
+  // Recording finished — pause (one-shot default) or explicit mic stop — means
+  // "send now". Guards: never send an empty composer, and clear any pending
+  // send-intent flag so the message can't fire twice.
+  function _autoSendAfterDictation(){
+    window._micPendingSend=false;
+    const hasText=!!ta.value.trim();
+    const hasFiles=!!(typeof S!=='undefined'&&S&&Array.isArray(S.pendingFiles)&&S.pendingFiles.length);
+    if(hasText||hasFiles) send();
   }
 
   function _allowBrowserSttFallback(){
@@ -875,18 +872,13 @@ function _micToastKeyForRecognitionError(error){
     }
   }
 
-  // Gate continuous dictation to MOBILE so desktop stays one-shot (single
-  // utterance). An explicit hermes-mic-continuous flag wins in both directions,
-  // mirroring the wings-voice-continuous pattern: 'true' opts a desktop in,
-  // 'false' opts a mobile out. Absent a flag, coarse-pointer (touch) devices get
-  // continuity and everything else stays single-utterance.
+  // Gate continuous dictation to an explicit opt-in flag. Default (also on
+  // mobile): one-shot — a natural pause ends the session and the committed
+  // transcript is sent immediately (Wings redesign: recording done = send).
+  // 'wings-mic-continuous'='true' restores the legacy continuous mode for
+  // power users who dictate in multiple bursts.
   function _micDictationContinuous(){
-    try{
-      const flag=localStorage.getItem('wings-mic-continuous');
-      if(flag==='true') return true;
-      if(flag==='false') return false;
-    }catch(_){}
-    try{ return window.matchMedia('(pointer:coarse)').matches; }catch(_){ return false; }
+    try{ return localStorage.getItem('wings-mic-continuous')==='true'; }catch(_){ return false; }
   }
 
   // Only auto-restart the composer-mic session on a natural pause: continuity
@@ -972,8 +964,9 @@ function _micToastKeyForRecognitionError(error){
   function _ensureSpeechRecognition(){
     if(!SpeechRecognition) return null;
     const sr=recognition||new SpeechRecognition();
-    // Desktop dictation stays one-shot (single utterance); mobile / opt-in
-    // devices run continuous so a natural pause doesn't end the session (#5294).
+    // One-shot by default on all devices: a natural pause ends the session and
+    // the committed transcript is sent immediately. Continuous mode survives
+    // only as an explicit opt-in (wings-mic-continuous='true').
     sr.continuous=_micDictationContinuous();
     sr.interimResults=true;
     sr.lang=(typeof _locale!=='undefined'&&_locale._speech)||'en-US';
@@ -1031,10 +1024,8 @@ function _micToastKeyForRecognitionError(error){
       _micRestartCount=0;
       void _releaseMicWakeLock();
       _setRecording(false);
-      if(window._micPendingSend){
-        window._micPendingSend=false;
-        send();
-      }
+      // Recording ended (natural pause or explicit mic stop) → send immediately.
+      _autoSendAfterDictation();
       _applyDeferredServerSttFlip();
     };
 
@@ -2568,17 +2559,16 @@ const _THEMES=[
 ];
 const _SKINS=[
   {name:'Default',     colors:['#FFD700','#FFBF00','#CD7F32']},
-  {name:'Wings Light', value:'wings-light', colors:['#2563EB','#D6D6D6','#FFFFFF']},
-  {name:'Wings Dark',  value:'wings-dark',  colors:['#FFD700','#333333','#0A0A0A']},
-  {name:'Wings Neon',  value:'wings-neon',  colors:['#08EBF1','#3889FD','#0D1117']},
+  {name:'Midnight',    value:'midnight', colors:['#4C8DFF','#101828','#0A0F1C']},
+  {name:'Neon',        value:'neon',     colors:['#22D3EE','#10131A','#08090C']},
 ];
 const _VALID_THEMES=new Set((_THEMES||[]).map(t=>t.value));
 const _VALID_SKINS=new Set((_SKINS||[]).map(s=>(s.value||s.name).toLowerCase()));
 const _LEGACY_THEME_MAP={
-  slate:{theme:'dark',skin:'slate'},
-  solarized:{theme:'dark',skin:'poseidon'},
-  monokai:{theme:'dark',skin:'sisyphus'},
-  nord:{theme:'dark',skin:'slate'},
+  slate:{theme:'dark',skin:'midnight'},
+  solarized:{theme:'dark',skin:'midnight'},
+  monokai:{theme:'dark',skin:'neon'},
+  nord:{theme:'dark',skin:'midnight'},
   oled:{theme:'dark',skin:'default'},
 };
 let _systemThemeMq=null;

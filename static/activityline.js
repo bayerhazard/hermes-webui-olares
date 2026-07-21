@@ -95,7 +95,7 @@
       '<span class="wings-aline-dot" aria-hidden="true"></span>' +
       '<span class="wings-aline-verb"></span>' +
       '<span class="wings-aline-preview"></span>' +
-      '<span class="wings-aline-chevron" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>';
+      '<span class="wings-aline-chevron" aria-hidden="true"></span>';
     const toggle = () => { turn.classList.toggle('wings-aline-open'); };
     line.addEventListener('click', toggle);
     line.addEventListener('keydown', (ev) => {
@@ -149,6 +149,38 @@
       const verb = n === 1 ? _t('wings_activity_action_one')
         : _t('wings_activity_actions_many', n);
       _setContent(line, 'settled', verb, dur);
+    }
+    _syncFilesChip(turn, line, live);
+  }
+
+  /* Settled turns that produced files get a quiet download chip at the end of
+     the line: direct download for a single file, count + expand for many. The
+     hrefs are reused from the per-tool-card download buttons already rendered
+     inside the trace, so no path/URL logic is duplicated here. */
+  function _syncFilesChip(turn, line, live) {
+    let chip = line.querySelector('.wings-aline-files');
+    const links = Array.from(turn.querySelectorAll('.tool-card-download'));
+    if (live || !links.length) {
+      if (chip) chip.remove();
+      return;
+    }
+    const label = links.length === 1
+      ? _t('wings_activity_file_one')
+      : _t('wings_activity_files_many', links.length);
+    if (!chip) {
+      chip = document.createElement('a');
+      chip.className = 'wings-aline-files';
+      line.appendChild(chip);
+    }
+    chip.textContent = label;
+    if (links.length === 1) {
+      chip.setAttribute('href', links[0].getAttribute('href'));
+      chip.setAttribute('download', '');
+      chip.onclick = (ev) => { ev.stopPropagation(); };
+    } else {
+      chip.removeAttribute('href');
+      chip.removeAttribute('download');
+      chip.onclick = null; // click falls through to the line toggle → expands the trace
     }
   }
 

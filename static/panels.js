@@ -1,12 +1,12 @@
 let _currentPanel = 'chat';
 
 /* ── Interface mode (Basic / Advanced) ──────────────────────────────────────
-   Basic mirrors the classic Wings scope: chat, tasks, skills and the core
-   settings sections. Advanced reveals the full workbench. The CSS rule
-   `[data-mode="basic"] …` hides the surfaces below; the guards in
+   Basic is chat-first: only the sessions sidebar plus quiet footer access to
+   memory, insights and settings. Advanced reveals the full workbench. The CSS
+   rule `[data-mode="basic"] …` hides the surfaces below; the guards in
    switchPanel()/switchSettingsSection() make sure hidden surfaces can never
    become active or fetch data. Keep both lists in sync with style.css. */
-const ADVANCED_PANELS = new Set(['kanban', 'memory', 'workspaces', 'profiles', 'todos', 'insights', 'logs']);
+const ADVANCED_PANELS = new Set(['tasks', 'skills', 'kanban', 'workspaces', 'profiles', 'todos', 'logs']);
 const ADVANCED_SETTINGS_SECTIONS = new Set(['providers', 'extensions', 'system']);
 
 function _isMobileViewport() {
@@ -445,6 +445,15 @@ function _syncMobileSidebarPanelFromMainView(){
   document.querySelectorAll('.panel-view').forEach(p=>p.classList.remove('active'));
   panelEl.classList.add('active');
   return panel;
+}
+
+// Basic-mode sidebar footer: memory / insights / settings open their main
+// views; clicking the active entry returns to the chat. Deliberately does NOT
+// pass fromRailClick so the desktop sidebar-collapse shortcut stays unused.
+function sidebarFooterNav(name) {
+  if (_currentPanel === name) switchPanel('chat');
+  else switchPanel(name);
+  if (typeof closeMobileSidebar === 'function') closeMobileSidebar();
 }
 
 async function switchPanel(name, opts = {}) {
@@ -7564,8 +7573,8 @@ let _settingsPreferencesAutosaveRetryPayload = null;
 
 // ── Sidebar tab visibility/order ────────────────────────────────────────────
 const _ALWAYS_VISIBLE_TABS = new Set(['chat','settings']);
-const _HIDDEN_TABS_LS_KEY = 'hermes-webui-hidden-tabs';
-const _TAB_ORDER_LS_KEY = 'hermes-webui-tab-order';
+const _HIDDEN_TABS_LS_KEY = 'wings-hidden-tabs';
+const _TAB_ORDER_LS_KEY = 'wings-tab-order';
 const _COMPOSER_CONTROL_ORDER_LS_KEY = 'hermes-webui-composer-control-order';
 let _tabVisibilityDragSuppressUntil = 0;
 let _composerControlDragSuppressUntil = 0;

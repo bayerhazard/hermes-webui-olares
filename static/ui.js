@@ -6277,8 +6277,10 @@ function _syncCtxIndicator(usage){
   const ctxWindow=usage.context_length||DEFAULT_CTX;
   const cost=usage.estimated_cost;
   // Show indicator whenever we have any usage data (tokens or cost)
+  const _pill=$('titlebarStatusPill');
   if(!promptTok&&!totalTok&&!cost&&!cacheReadTok&&!cacheWriteTok){
     if(wrap) wrap.style.display='none';
+    if(_pill) _pill.classList.remove('has-ctx');
     _syncMobileCtxDisplay({visible:false});
     return;
   }
@@ -6288,6 +6290,7 @@ function _syncCtxIndicator(usage){
     wrap.removeAttribute('aria-hidden');
     wrap.style.display='';
   }
+  if(_pill) _pill.classList.add('has-ctx');
   let hasPromptTok=!!promptTok;
   if(hasPostCompressionEstimate) hasPromptTok=true;
   const rawPct=hasPromptTok?Math.round((contextPromptTok/ctxWindow)*100):0;
@@ -6324,38 +6327,25 @@ function _syncCtxIndicator(usage){
   if(cost) label+=` \u00b7 $${cost<0.01?cost.toFixed(4):cost.toFixed(2)}`;
   if(cacheText) label+=` \u00b7 ${cacheText}`;
   el.setAttribute('aria-label',label);
-  const usageText=hasPromptTok?(overflowed?`${contextLabel}: ${rawPct}% used (context exceeded)`:`${contextLabel}: ${pct}% used (${100-pct}% left)`):`${_fmtTokens(totalTok)} tokens used`;
-  const tokensText=hasPromptTok?`${contextLabel}: ${_fmtTokens(contextPromptTok)} / ${_fmtTokens(ctxWindow)} tokens used`:`In: ${_fmtTokens(usage.input_tokens||0)} \u00b7 Out: ${_fmtTokens(usage.output_tokens||0)}`;
+  const usageText=hasPromptTok?`${hasPostCompressionEstimate?'~':''}${_fmtTokens(contextPromptTok)} / ${_fmtTokens(ctxWindow)} tokens`:`${_fmtTokens(totalTok)} tokens used`;
+  let tokensText=hasPromptTok?(overflowed?`${rawPct}% used — context exceeded`:`${pct}% used`):`In: ${_fmtTokens(usage.input_tokens||0)} \u00b7 Out: ${_fmtTokens(usage.output_tokens||0)}`;
+  if(cost) tokensText+=` \u00b7 $${cost<0.01?cost.toFixed(4):cost.toFixed(2)}`;
+  if(cacheText) tokensText+=` \u00b7 ${cacheText}`;
   if(usageLine) usageLine.textContent=usageText;
   if(tokensLine) tokensLine.textContent=tokensText;
   const threshold=usage.threshold_tokens||0;
-  let thresholdText='';
+  // KPI-compact tooltip: threshold and cost lines stay hidden — the essentials
+  // (absolute tokens, percent, cost) live in the two lines above.
   if(thresholdLine){
-    if(threshold&&ctxWindow){
-      thresholdText=`Auto-compress at ${_fmtTokens(threshold)} (${Math.round(threshold/ctxWindow*100)}%)`;
-      thresholdLine.style.display='';
-      thresholdLine.textContent=thresholdText;
-    }else{
-      thresholdLine.style.display='none';
-      thresholdLine.textContent='';
-    }
+    thresholdLine.style.display='none';
+    thresholdLine.textContent='';
   }
-  let costText='';
   if(costLine){
-    if(cost){
-      costText=`Estimated cost: $${cost<0.01?cost.toFixed(4):cost.toFixed(2)}`;
-      if(cacheText) costText+=` \u00b7 ${cacheText}`;
-      costLine.style.display='';
-      costLine.textContent=costText;
-    }else if(cacheText){
-      costText=cacheText;
-      costLine.style.display='';
-      costLine.textContent=costText;
-    }else{
-      costLine.style.display='none';
-      costLine.textContent='';
-    }
+    costLine.style.display='none';
+    costLine.textContent='';
   }
+  const thresholdText='';
+  const costText='';
   _syncMobileCtxDisplay({
     visible:true,
     hasPromptTok,
@@ -17083,6 +17073,19 @@ function _toolDetailLeadText(kind, tc){
   if(!target) return '';
   return target;
 }
+
+// Returns the workspace-relative path when a tool call created or modified a
+// file (write/create/save/edit/append), else ''. Drives the in-chat download
+// affordance for generated documents.
+function _toolCreatedFilePath(tc){
+  if(!tc||!tc.name) return '';
+  const name=String(tc.name);
+  if(!/^(write_file|create_file|save_file|edit_file|append_file|write_to_file)$/i.test(name)) return '';
+  const a=tc.args||{};
+  const p=a.path||a.file_path||a.filename||a.file||a.target_file||'';
+  return (typeof p==='string'&&p.trim())?p.trim():'';
+}
+
 function buildToolCard(tc){
   const row=document.createElement('div');
   row.className='tool-card-row';
@@ -17128,6 +17131,12 @@ function buildToolCard(tc){
   const detailLeadText=hasDetail&&typeof _toolDetailLeadText==='function'?_toolDetailLeadText(toolKind,tc):'';
   const detailLeadLabel=typeof _toolDetailLeadLabel==='function'?_toolDetailLeadLabel(toolKind):(toolKind==='shell'?'Shell':'Input');
   const detailLead=detailLeadText?`<div class="tool-card-detail-lead"><div class="tool-card-detail-lead-label">${esc(detailLeadLabel)}</div><pre>${esc(detailLeadText)}</pre></div>`:'';
+  // Generated documents stay downloadable right from the chat — crucial in
+  // Basic mode, where the workspace panel is not available.
+  const createdPath=_toolCreatedFilePath(tc);
+  const createdUrl=createdPath&&typeof _workspaceRouteForPath==='function'?_workspaceRouteForPath(createdPath,'raw',{download:true}):'';
+  const dlLabel=(typeof t==='function')?t('download_file','Download file'):'Download file';
+  const downloadBtn=createdUrl?`<a class="tool-card-download" href="${esc(createdUrl)}" download title="${esc(dlLabel)}" aria-label="${esc(dlLabel)}" onclick="event.stopPropagation()">${li('download',12)}</a>`:'';
   const argsEntries=tc.args&&Object.keys(tc.args).length?Object.entries(tc.args):[];
   const visibleArgs=(detailLeadText&&toolKind==='shell')?[]:argsEntries;
   row.innerHTML=`
@@ -17137,6 +17146,7 @@ function buildToolCard(tc){
         <span class="tool-card-icon">${icon}</span>
         <span class="tool-card-name"><span class="tool-card-name-label">${esc(displayName)}</span><span class="tool-card-name-generic">${esc(genericName)}</span></span>
         <span class="tool-card-preview">${esc(previewText)}</span>
+        ${downloadBtn}
         ${hasDetail?`<span class="tool-card-toggle">${li('chevron-right',12)}</span>`:''}
       </div>
       ${hasDetail?`<div class="tool-card-detail">

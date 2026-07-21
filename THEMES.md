@@ -19,9 +19,8 @@ toggles Light/Dark/System; the **Skin** grid offers the built-in accent palettes
 Preview is instant — the UI updates as you click.
 
 **Slash command:** Type `/theme <name>` in the composer. The command accepts
-both theme names (`system`, `dark`, `light`) and skin names (`default`, `ares`,
-`mono`, `slate`, `poseidon`, `sisyphus`, `charizard`, `sienna`,
-`catppuccin`, `nous`, `geist-contrast`, `zeus`). It updates the matching axis and leaves the other one
+both theme names (`system`, `dark`, `light`) and skin names (`default`,
+`midnight`, `neon`). It updates the matching axis and leaves the other one
 alone.
 
 **Persistence:** Both choices are stored in `localStorage` for flicker-free
@@ -47,22 +46,14 @@ absent for light. System mode tracks the OS preference at runtime.
 
 | Skin | Description |
 |------|-------------|
-| **Default** | The original Hermes gold accent. Warm and understated. |
-| **Ares** | Fiery red. High-energy and assertive. |
-| **Mono** | Neutral gray. Distraction-free, for deep focus. |
-| **Slate** | Slate blue-gray. Subtle and grown-up. |
-| **Poseidon** | Ocean blue. Calm and focused for long sessions. |
-| **Sisyphus** | Vivid purple. Distinctive without being loud. |
-| **Charizard** | Warm orange. Energetic and easy on the eyes. |
-| **Sienna** | Warm clay and sand earth palette. Soft and natural. |
-| **Catppuccin** | Catppuccin Latte/Mocha palette with Mauve accent. |
-| **Nous** | Steel-blue accent with dashed technical surfaces. |
-| **Geist Contrast** (`geist-contrast`) | Geist-inspired monochrome surfaces with a restrained dark-mode `#FFF175` accent. |
-| **Zeus** | OLED-near-black dark surfaces that keep the default gold accent. Dark-focused; falls back to the default light palette in light mode. |
+| **Default** | The original Hermes gold accent (navy in light mode). Warm and understated. |
+| **Midnight** | The trendy dark blue — deep navy surfaces with an electric steel-blue accent (Linear/X caliber). Light variant is an ice-blue tinted light theme. |
+| **Neon** | Modern, tasteful neon: cyan accent on near-black, glow reserved for focus and active states. Dark-focused — falls back to the default palette in light mode. |
 
 Each skin defines paired light + dark variants so it reads cleanly on either
-theme. The skin is applied as `data-skin="<name>"` on `<html>` (the default
-skin clears the attribute).
+theme (except dark-focused skins like Neon, which fall back to the default
+light palette). The skin is applied as `data-skin="<name>"` on `<html>` (the
+default skin clears the attribute).
 
 ---
 
