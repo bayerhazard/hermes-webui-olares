@@ -1023,20 +1023,13 @@ def test_pwa_safe_area_top_stays_scoped_to_installed_modes():
 
 
 def test_titlebar_safe_area_top_uses_scoped_variable():
-    """The titlebar must use the safe-area variable instead of direct env()."""
-    # Match the GLOBAL `.app-titlebar{...}` rule, not skin-scoped variants like
-    # `:root.dark[data-skin="neon"] .app-titlebar{...}` (#3164) which can appear
-    # earlier in the file. Require the selector to start the line (optionally
-    # indented) with no `[data-skin=` scope prefix.
+    """The titlebar is hidden by default (display:none) — safe-area padding
+    is no longer applied to it. This test now just verifies the rule exists."""
     m = re.search(r'(?m)^\s*\.app-titlebar\{(?P<body>[^}]*)\}', CSS)
     assert m, ".app-titlebar rule missing from style.css"
     rule = m.group("body")
-    assert "padding-top:var(--app-titlebar-safe-top)" in rule, (
-        ".app-titlebar must use the scoped safe-area variable for top padding"
-    )
-    assert "padding-top:env(safe-area-inset-top" not in rule, (
-        ".app-titlebar must not apply env(safe-area-inset-top) directly in "
-        "the base browser/webview layout"
+    assert "display:none" in rule, (
+        ".app-titlebar must be hidden (display:none) — the top bar was removed"
     )
 
 

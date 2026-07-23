@@ -7644,33 +7644,12 @@ function renderSessionListFromCache(){
     list.appendChild(empty);
   }
   const orderedSessions=[...sessions].sort(_sessionSidebarSortCompare);
-  // Separate pinned from unpinned
+  // Flat list — no date grouping, sessions simply listed underneath each other
   const pinned=orderedSessions.filter(s=>s.pinned);
   const unpinned=orderedSessions.filter(s=>!s.pinned);
-  // Date grouping: Pinned / Today / Yesterday / This week / Last week / Older
-  const now=_serverNowMs();
-  // Collapse state persisted in localStorage
-  let _groupCollapsed={};
-  try{_groupCollapsed=JSON.parse(localStorage.getItem('hermes-date-groups-collapsed')||'{}');}catch(e){}
-  const _saveCollapsed=()=>{try{localStorage.setItem('hermes-date-groups-collapsed',JSON.stringify(_groupCollapsed));}catch(e){}};
-  // Group sessions by date
-  const groups=[];
-  let curLabel=null,curItems=[];
-  if(pinned.length) groups.push({label:'\u2605 Pinned',items:pinned,isPinned:true});
-  for(const s of unpinned){
-    const ts=_sessionSortTimestampMs(s);
-    const label=_sessionTimeBucketLabel(ts, now);
-    if(label!==curLabel){
-      if(curItems.length) groups.push({label:curLabel,items:curItems});
-      curLabel=label;curItems=[s];
-    } else { curItems.push(s); }
-  }
-  if(curItems.length) groups.push({label:curLabel,items:curItems});
+  const allSessions=[...pinned, ...unpinned];
   const flatSessionRows=[];
-  for(const g of groups){
-    if(_groupCollapsed[g.label]) continue;
-    for(const s of g.items){ flatSessionRows.push({group:g,session:s}); }
-  }
+  for(const s of allSessions){ flatSessionRows.push({group:null, session:s}); }
   _sessionVisibleSidebarIds=flatSessionRows.map(row=>row.session&&row.session.session_id).filter(Boolean);
   for(const row of flatSessionRows){
     const s=row.session;
@@ -7722,48 +7701,12 @@ function renderSessionListFromCache(){
   list.dataset.sessionVirtualFilter=q;
   list.dataset.sessionVirtualStart=String(virtualWindow.start);
   list.dataset.sessionVirtualEnd=String(virtualWindow.end);
-  // Render groups with collapsible headers. Large sidebars render only the
-  // current session-row window plus top/bottom spacers inside each group body;
-  // headers remain real DOM so pin/archive/date grouping and clicks survive.
+  // Render flat session list (no date group headers)
   let globalSessionRowIndex=0;
-  for(const g of groups){
-    const wrapper=document.createElement('div');
-    wrapper.className='session-date-group';
-    const hdr=document.createElement('div');
-    hdr.className='session-date-header'+(g.isPinned?' pinned':'');
-    const caret=document.createElement('span');
-    caret.className='session-date-caret';
-    caret.textContent='\u25BE'; // down when expanded; rotated right when collapsed
-    const label=document.createElement('span');
-    label.textContent=g.label;
-    hdr.appendChild(caret);hdr.appendChild(label);
-    const body=document.createElement('div');
-    body.className='session-date-body';
-    const isGroupCollapsed=Boolean(_groupCollapsed[g.label]);
-    if(isGroupCollapsed){body.style.display='none';caret.classList.add('collapsed');}
-    hdr.onclick=()=>{
-      const isCollapsed=body.style.display==='none';
-      body.style.display=isCollapsed?'':'none';
-      caret.classList.toggle('collapsed',!isCollapsed);
-      _groupCollapsed[g.label]=!isCollapsed;
-      _saveCollapsed();
-      renderSessionListFromCache();
-    };
-    wrapper.appendChild(hdr);
-    let groupTopPad=0;
-    let groupBottomPad=0;
-    for(const s of g.items){
-      if(isGroupCollapsed) continue;
-      const rowIndex=globalSessionRowIndex++;
-      const inWindow=!virtualWindow.virtualized||(rowIndex>=virtualWindow.start&&rowIndex<virtualWindow.end);
-      if(inWindow){ body.appendChild(_renderOneSession(s, Boolean(g.isPinned))); }
-      else if(rowIndex<virtualWindow.start){ groupTopPad+=virtualWindow.itemHeight; }
-      else { groupBottomPad+=virtualWindow.itemHeight; }
-    }
-    if(groupTopPad>0){ body.insertBefore(_sessionVirtualSpacer(groupTopPad,'before'), body.firstChild); }
-    if(groupBottomPad>0){ body.appendChild(_sessionVirtualSpacer(groupBottomPad,'after')); }
-    wrapper.appendChild(body);
-    list.appendChild(wrapper);
+  for(const s of allSessions){
+    const rowIndex=globalSessionRowIndex++;
+    const inWindow=!virtualWindow.virtualized||(rowIndex>=virtualWindow.start&&rowIndex<virtualWindow.end);
+    if(inWindow){ list.appendChild(_renderOneSession(s, s.pinned||false)); }
   }
   if(virtualAnchorScrollTop!==null){
     list.scrollTop=virtualAnchorScrollTop;

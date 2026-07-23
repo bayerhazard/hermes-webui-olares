@@ -2569,7 +2569,7 @@ function _renderAttachmentHtml(fname, url){
     const inlineUrl=url+(String(url).includes('?')?'&':'?')+'inline=1';
     return `<a class="msg-file-badge msg-file-badge--html" href="${esc(inlineUrl)}" target="_blank" rel="noopener">${li('file-code',12)} ${esc(fname)}</a>`;
   }
-  return `<div class="msg-file-badge">${li('paperclip',12)} ${esc(fname)}</div>`;
+  return `<div class="msg-file-badge">${li('plus',12)} ${esc(fname)}</div>`;
 }
 document.addEventListener('click', e => {
   const btn=e.target&&e.target.closest?e.target.closest('.media-speed-btn'):null;
@@ -7815,7 +7815,7 @@ function _renderQueueChips(sid){
       const fb=document.createElement('span');
       fb.className='queue-card-file-badge';
       fb.title=_files.map(f=>f&&f.name||'file').join(', ');
-      fb.innerHTML=li('paperclip',11)+_files.length;
+      fb.innerHTML=li('plus',11)+_files.length;
       badges.appendChild(fb);
     }
     const _model=entry&&entry.model;
@@ -19769,7 +19769,7 @@ function renderTray(){ // non-media files use paperclip chip
         chip.innerHTML=`<span class="attach-chip-media">🎬 ${esc(f.name)}</span><video controls preload="metadata" src="${esc(blobUrl)}"></video><button title="${t('remove_title')}">${li('x',12)}</button>`;
       }
     } else {
-      chip.innerHTML=`${li('paperclip',12)} ${esc(f.name)} <button title="${t('remove_title')}">${li('x',12)}</button>`;
+      chip.innerHTML=`${li('plus',12)} ${esc(f.name)} <button title="${t('remove_title')}">${li('x',12)}</button>`;
     }
     chip.querySelector('button').onclick=()=>{
       // Revoke blob URL to avoid memory leak before removing

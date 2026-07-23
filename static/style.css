@@ -132,18 +132,18 @@
   :root[data-font-size="xlarge"] { font-size: 18px; }
   /* ── Dark mode — navy-black + gold accent matching Hermes terminal ── */
   :root.dark {
-    --bg:#0A0A0A;--surface:#121212;--sidebar:#0A0A0A;--border:rgba(201,164,92,0.15);--border2:rgba(201,164,92,0.25);
-    --text:#FFFFFF;--muted:#9CA3AF;--accent:#C9A45C;--blue:#4DD0E1;--gold:#C9A45C;--code-bg:#181818;
-    --topbar-bg:rgba(10,10,10,.98);--main-bg:rgba(10,10,10,0.5);
+    --bg:#161616;--surface:#1E1E1E;--sidebar:#141414;--border:transparent;--border2:transparent;
+    --text:#FFFFFF;--muted:#9CA3AF;--accent:#C9A45C;--blue:#4DD0E1;--gold:#C9A45C;--code-bg:#202020;
+    --topbar-bg:rgba(22,22,22,.98);--main-bg:rgba(22,22,22,0.5);
     --focus-ring:rgba(201,164,92,.35);--focus-glow:rgba(201,164,92,.1);
     --input-bg:rgba(255,255,255,.04);--hover-bg:rgba(255,255,255,.06);
     --strong:#FFFFFF;--em:#9CA3AF;--code-text:#E2E8F0;--code-inline-bg:rgba(255,255,255,.08);--pre-text:#E2E8F0;
     --accent-hover:#B8935F;--accent-bg:rgba(201,164,92,0.08);--accent-bg-strong:rgba(201,164,92,0.15);--accent-text:#C9A45C;
     --error:#EF5350;--success:#4CAF50;--warning:#FFA726;--info:#4DD0E1;
     --surface-subtle:rgba(255,255,255,.025);--surface-subtle-hover:rgba(255,255,255,.045);
-    --border-subtle:rgba(255,255,255,.06);--border-muted:rgba(255,255,255,.10);
+    --border-subtle:transparent;--border-muted:transparent;
     /* ── Premium redesign tokens (dark) ── */
-    --chat-bg:#0D0D0F;
+    --chat-bg:#1A1A1E;
     --shadow-sm:0 1px 2px rgba(0,0,0,.4);
     --shadow-md:0 4px 18px -2px rgba(0,0,0,.5),0 2px 6px -1px rgba(0,0,0,.4);
     --shadow-lg:0 12px 32px -4px rgba(0,0,0,.55),0 4px 12px -2px rgba(0,0,0,.45);
@@ -168,16 +168,16 @@
     --user-bubble-bg:var(--accent);--user-bubble-border:var(--accent-hover);--user-bubble-text:#fff;
   }
   :root.dark[data-skin="midnight"] {
-    --bg:#0A0F1C;--surface:#101828;--sidebar:#0C1322;--border:rgba(148,163,184,.14);--border2:rgba(148,163,184,.24);
-    --text:#E2E8F0;--muted:#94A3B8;--accent:#4C8DFF;--blue:#4C8DFF;--gold:#C9A45C;--code-bg:#131D33;
-    --topbar-bg:rgba(10,15,28,.98);--main-bg:rgba(10,15,28,0.5);
+    --bg:#121826;--surface:#1A2438;--sidebar:#121826;--border:transparent;--border2:transparent;
+    --text:#E2E8F0;--muted:#94A3B8;--accent:#4C8DFF;--blue:#4C8DFF;--gold:#C9A45C;--code-bg:#1A2438;
+    --topbar-bg:rgba(18,24,38,.98);--main-bg:rgba(18,24,38,0.5);
     --focus-ring:rgba(76,141,255,.4);--focus-glow:rgba(76,141,255,.12);
     --input-bg:rgba(148,163,184,.06);--hover-bg:rgba(148,163,184,.09);
     --strong:#F1F5F9;--em:#94A3B8;--code-text:#E2E8F0;--code-inline-bg:rgba(148,163,184,.1);--pre-text:#E2E8F0;
     --accent-hover:#2F6FE0;--accent-bg:rgba(76,141,255,.1);--accent-bg-strong:rgba(76,141,255,.18);--accent-text:#7AABFF;
-    --chat-bg:#0C1220;
+    --chat-bg:#161E30;
     --surface-subtle:rgba(148,163,184,.04);--surface-subtle-hover:rgba(148,163,184,.07);
-    --border-subtle:rgba(148,163,184,.1);--border-muted:rgba(148,163,184,.16);
+    --border-subtle:transparent;--border-muted:transparent;
     --user-bubble-bg:var(--accent);--user-bubble-border:var(--accent-hover);--user-bubble-text:#fff;
   }
   /* ── Skin: Neon — modern, tasteful glow on near-black ──
@@ -187,16 +187,16 @@
     --accent:#0891B2;--accent-hover:#067A9A;--accent-bg:rgba(8,145,178,.08);--accent-bg-strong:rgba(8,145,178,.15);--accent-text:#0891B2;--focus-ring:rgba(8,145,178,.2);
   }
   :root.dark[data-skin="neon"] {
-    --bg:#08090C;--surface:#10131A;--sidebar:#0A0C10;--border:rgba(34,211,238,.14);--border2:rgba(34,211,238,.24);
-    --text:#E6EDF3;--muted:#8B949E;--accent:#22D3EE;--blue:#22D3EE;--gold:#C9A45C;--code-bg:#12161F;
-    --topbar-bg:rgba(8,9,12,.98);--main-bg:rgba(8,9,12,0.5);
+    --bg:#121318;--surface:#1A1C24;--sidebar:#121318;--border:transparent;--border2:transparent;
+    --text:#E6EDF3;--muted:#8B949E;--accent:#22D3EE;--blue:#22D3EE;--gold:#C9A45C;--code-bg:#1A1C24;
+    --topbar-bg:rgba(18,19,24,.98);--main-bg:rgba(18,19,24,0.5);
     --focus-ring:rgba(34,211,238,.45);--focus-glow:rgba(34,211,238,.14);
     --input-bg:rgba(255,255,255,.04);--hover-bg:rgba(34,211,238,.07);
     --strong:#FFFFFF;--em:#8B949E;--code-text:#E6EDF3;--code-inline-bg:rgba(255,255,255,.08);--pre-text:#E6EDF3;
     --accent-hover:#0EC5E0;--accent-bg:rgba(34,211,238,.09);--accent-bg-strong:rgba(34,211,238,.17);--accent-text:#22D3EE;
-    --chat-bg:#0A0C10;
+    --chat-bg:#16181F;
     --surface-subtle:rgba(255,255,255,.025);--surface-subtle-hover:rgba(255,255,255,.045);
-    --border-subtle:rgba(255,255,255,.06);--border-muted:rgba(255,255,255,.1);
+    --border-subtle:transparent;--border-muted:transparent;
     --user-bubble-bg:var(--accent);--user-bubble-border:var(--accent-hover);--user-bubble-text:#06232B;
   }
   /* Neon glow: reserved for focus and active states */
@@ -204,6 +204,15 @@
   :root.dark[data-skin="neon"] .send-btn:not(:disabled){box-shadow:0 0 14px rgba(34,211,238,.35);}
   :root.dark[data-skin="neon"] .session-item.active{box-shadow:inset 3px 0 0 var(--accent),0 0 12px rgba(34,211,238,.1);}
   :root.dark[data-skin="neon"] .titlebar-status-pill:hover{box-shadow:0 0 10px rgba(34,211,238,.14);}
+
+  /* ── Dark mode: hide titlebar, darker session text, darker placeholder ── */
+  .app-titlebar{display:none;}
+  :root.dark .session-item{color:color-mix(in srgb, var(--muted) 90%, #000);}
+  :root.dark textarea#msg::placeholder{color:color-mix(in srgb, var(--muted) 70%, #000);opacity:1;}
+  :root.dark .sidebar{border-right:none;}
+  :root.dark .sidebar-header{border-bottom:none;}
+  :root.dark .composer-wrap{border-top:none;}
+  :root.dark .panel-head{border-bottom:none;}
 
 
   /* #594: app-dialog light mode overrides — base styles use hardcoded dark gradients */

@@ -11,7 +11,7 @@ metadata:
   description: Wings for Hermes — AI Agent Web UI with chat, sessions, memory, skills, cron, profiles, workspaces
   appid: wings
   title: Wings for Hermes
-  version: '1.4.0'
+  version: '1.4.1'
   categories:
     - Productivity_v112
     - Developer Tools
@@ -24,9 +24,9 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.4.0'
+  versionName: '1.4.1'
   upgradeDescription: |
-    v1.4.0: Premium redesign — new status pill (context ring + model switcher) in the header, a calmer chat-first Basic mode (no icon rail; memory, insights and settings live in the sidebar footer), a refined composer with a larger send action and voice input that sends automatically when recording ends, generated documents downloadable right from the chat, native dropdowns replaced by quiet fields, and a curated skin set: Default, Midnight (dark blue) and Neon. Note: Tasks and Skills now live in Advanced mode.
+    v1.4.1: Dark theme refinements — anthrazit backgrounds (sidebar +5%, chat/composer +10% lighter), accent color removed from borders and dividers (transparent), attachment icon replaced with plus, memory icon replaced with database, sidebar date grouping removed (flat session list), session text 10% darker in dark mode, top app bar removed (status pill moved to sidebar header replacing "Chat" label), placeholder changed to "Wie kann ich helfen?" with darker color in dark theme.
   fullDescription: |
     **Wings for Hermes** — AI Agent Web UI, forked from hermes-webui.
 
