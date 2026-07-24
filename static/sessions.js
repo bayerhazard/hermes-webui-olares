@@ -1806,7 +1806,7 @@ async function loadSession(sid){
     }
     if(_msgInner){
       if(e.status===404){
-        _msgInner.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:14px;padding:40px;text-align:center;">Session not available in web UI.</div>';
+        _msgInner.innerHTML='<div style="display:none;"></div>';
         // Self-heal (clear saved id + strip /session/<id> URL) only when the
         // 404'd id is the one we are activating: a boot-time restore
         // (!currentSid, #2798) or a mid-session reload of the *current* session
