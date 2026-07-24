@@ -11,7 +11,7 @@ metadata:
   description: Wings for Hermes — AI Agent Web UI with chat, sessions, memory, skills, cron, profiles, workspaces
   appid: wings
   title: Wings for Hermes
-  version: '1.4.6'
+  version: '1.4.7'
   categories:
     - Productivity_v112
     - Developer Tools
@@ -24,9 +24,9 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.4.6'
+  versionName: '1.4.7'
   upgradeDescription: |
-    v1.4.6: Wings-native gauge card — replaces the round status pill with a Relay-style card (32px context ring without center text + two-line model/token display). Green→amber→red color shifting. Hidden on mobile. Model selector preserved on click.
+    v1.4.7: Auto-detect Hermes Agent home path — no manual configuration needed. initContainer scans /olares/rootfs/userspace for hermesagent home directory. hermesagent dependency declared. kubelet CIDR auto-detected from node IP. UID/GID auto-detected from hermesagent home directory ownership.
   fullDescription: |
     **Wings for Hermes** — AI Agent Web UI, forked from hermes-webui.
 
@@ -38,11 +38,18 @@ spec:
     - Tasks: cron jobs — view, create, edit, run, pause/resume, run history
     - Profiles, workspaces with file browser, todos, themes
 
-    **Standalone architecture**
-    Runs as a single container with all agent code bundled. No separate Hermes Agent dependency.
+    **Shared-state architecture**
+    Runs as a second, additive agent instance on the *same* HERMES_HOME as your existing Hermes Agent app. Sessions, memory, auth, and config are shared. The agent source is copied from the exact running gateway image at pod start, so the WebUI always runs version-matched code.
+
+    **Auto-detection**
+    On startup, the app automatically finds your Hermes Agent home directory — no manual path configuration needed. UID/GID is auto-detected from the hermesagent directory ownership.
 
     **Access**
-    Protected by Olares SSO (internal).
+    Protected by Olares SSO (internal). Set an additional app password in the app settings for defense in depth.
+
+    **Requirements**
+    - Requires the Hermes Agent app (hermesagent) installed for the same Olares user.
+    - Upstream project: https://github.com/nesquena/hermes-webui (MIT)
   developer: Aimighty
   website: https://github.com/bayerhazard/wings-for-hermes
   sourceCode: https://github.com/bayerhazard/wings-for-hermes
@@ -64,6 +71,9 @@ options:
     - name: olares
       version: '>=1.12.6-0'
       type: system
+    - name: hermesagent
+      version: '>=1.0.0'
+      type: app
   allowMultipleInstall: false
 envs:
   - envName: HERMES_WEBUI_PASSWORD

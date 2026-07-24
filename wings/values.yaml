@@ -10,7 +10,6 @@ workloads:
   wings:
     replicaCount: 1
 webuiPort: 8787
-hermesHomeHostPath: /olares/rootfs/userspace/pvc-userspace-aimighty-yxce0cmwdzqtayox/Data/hermesagent/home
 resources:
   limits:
     cpu: "4"
@@ -19,14 +18,9 @@ resources:
     cpu: 500m
     memory: 512Mi
 env:
-  HERMES_HOME: /opt/data
-  HERMES_WEBUI_STATE_DIR: /opt/data/webui
   HERMES_WEBUI_HOST: "0.0.0.0"
   HERMES_WEBUI_PORT: "8787"
   HERMES_WEBUI_SSE_CHUNKED: "1"
-  HERMES_WEBUI_SERVER_CWD: /opt/data
-  WANTED_UID: "1000"
-  WANTED_GID: "1000"
   TZ: Etc/UTC
 olaresEnv:
   HERMES_WEBUI_PASSWORD: ""
@@ -45,7 +39,5 @@ readinessProbe:
   periodSeconds: 15
   timeoutSeconds: 5
   failureThreshold: 3
-kubeletCidrs:
-  - 172.20.0.0/16
 service:
   type: ClusterIP
