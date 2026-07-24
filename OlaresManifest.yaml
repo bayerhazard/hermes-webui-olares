@@ -11,7 +11,7 @@ metadata:
   description: Wings for Hermes — AI Agent Web UI with chat, sessions, memory, skills, cron, profiles, workspaces
   appid: wings
   title: Wings for Hermes
-  version: '1.4.8'
+  version: '1.4.9'
   categories:
     - Productivity_v112
     - Developer Tools
@@ -24,9 +24,9 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.4.8'
+  versionName: '1.4.9'
   upgradeDescription: |
-    v1.4.8: Force re-sync to clear stale chartrepo state.
+    v1.4.9: Fix dependency type — hermesagent dependency uses 'application' not 'app'.
   fullDescription: |
     **Wings for Hermes** — AI Agent Web UI, forked from hermes-webui.
 
@@ -73,7 +73,7 @@ options:
       type: system
     - name: hermesagent
       version: '>=1.0.0'
-      type: app
+      type: application
   allowMultipleInstall: false
 envs:
   - envName: HERMES_WEBUI_PASSWORD
