@@ -11,7 +11,7 @@ metadata:
   description: Wings for Hermes — AI Agent Web UI with chat, sessions, memory, skills, cron, profiles, workspaces
   appid: wings
   title: Wings for Hermes
-  version: '1.4.4'
+  version: '1.4.5'
   categories:
     - Productivity_v112
     - Developer Tools
@@ -24,9 +24,9 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.4.4'
+  versionName: '1.4.5'
   upgradeDescription: |
-    v1.4.4: Empty-state title changed to "Wings for Hermes", placeholder to "Wie kann ich helfen?", live run status (Running timer) disabled, "↑ zur Antwort" jump button removed, settings submenu reordered (Conversation merged into System, new order: Preferences, Appearance, Providers, Plugins, Extensions, System, Help).
+    v1.4.5: Fix Service Worker cache — Wings version token added to cache name and asset URLs to force complete cache bust on every Wings update.
   fullDescription: |
     **Wings for Hermes** — AI Agent Web UI, forked from hermes-webui.
 
