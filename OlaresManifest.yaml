@@ -11,7 +11,7 @@ metadata:
   description: Wings for Hermes — AI Agent Web UI with chat, sessions, memory, skills, cron, profiles, workspaces
   appid: wings
   title: Wings for Hermes
-  version: '1.5.3'
+  version: '1.5.4'
   categories:
     - Productivity_v112
     - Developer Tools
@@ -24,9 +24,9 @@ entrances:
     openMethod: window
     authLevel: internal
 spec:
-  versionName: '1.5.3'
+  versionName: '1.5.4'
   upgradeDescription: |
-    v1.5.3: Thinner start-screen title, fix placeholder override in boot.js, hide 'Session not available' error, gauge card 10% wider.
+    v1.5.4: Reduce logo-title spacing by 33%, hide workspace panel edge toggle arrow, disable search field focus highlight.
   fullDescription: |
     **Wings for Hermes** — AI Agent Web UI, forked from hermes-webui.
 
